@@ -1,4 +1,10 @@
-expenses = []
+import json
+
+try:
+    with open("expenses.json", "r") as file:
+        expenses = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError):
+    expenses = []
 
 while True:
     print("\n===== EXPENSE TRACKER =====")
@@ -14,7 +20,8 @@ while True:
         amount = float(input("Enter amount: "))
 
         expenses.append([expense_name, amount])
-
+        with open("expenses.json", "w") as file:
+            json.dump(expenses, file, indent=4)
         print("Expense added:", expense_name)
         print("Amount:", amount)
 
@@ -39,6 +46,8 @@ while True:
 
             if number >= 1 and number <= len(expenses):
                 deleted_expense = expenses.pop(number - 1)
+                with open("expenses.json", "w") as file:
+                    json.dump(expenses, file, indent=4)
                 print("Deleted:", deleted_expense[0])
             else:
                 print("Invalid expense number")
