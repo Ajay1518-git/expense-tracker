@@ -17,9 +17,10 @@ while True:
 
     if choice == "1":
         expense_name = input("Enter expense name: ")
+        category = input("Enter category (Food/Travel/Shopping/Other): ")
         amount = float(input("Enter amount: "))
 
-        expenses.append([expense_name, amount])
+        expenses.append([expense_name, amount, category])
         with open("expenses.json", "w") as file:
             json.dump(expenses, file, indent=4)
         print("Expense added:", expense_name)
@@ -31,7 +32,7 @@ while True:
         else:
             print("\n===== YOUR EXPENSES =====")
             for expense in expenses:
-                print("Name:", expense[0], "| Amount:", expense[1])
+                print("Name:", expense[0], "| Amount:", expense[1], "| Category:", expense[2])
 
     elif choice == "3":
         if len(expenses) == 0:
