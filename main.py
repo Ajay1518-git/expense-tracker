@@ -15,7 +15,8 @@ while True:
     print("3. Delete Expense")
     print("4. Total Spending")
     print("5. Category-wise Spending")
-    print("6. Exit")
+    print("6. Monthly Spending Summary")
+    print("7. Exit")
 
     choice = input("Enter your choice: ")
 
@@ -33,13 +34,22 @@ while True:
                 expense_date = today
                 break
 
+            
             try:
-                datetime.strptime(expense_date, "%Y-%m-%d")
+                expense_date = expense_date.replace("/", "-")
+                expense_date = expense_date.replace(" ", "-")
+
+                parsed_date = datetime.strptime(
+                    expense_date, "%Y-%m-%d"
+                )
+
+                expense_date = parsed_date.strftime("%Y-%m-%d")
                 break
+
             except ValueError:
                 print(
-                    "Invalid date! Use YYYY-MM-DD, "
-                    "e.g. 2026-10-12."
+                    "Invalid date! Try 2026-10-13 "
+                    "or 2026 10 13."
                 )
 
         category = input(
@@ -134,8 +144,24 @@ while True:
 
             for category, total in category_totals.items():
                 print(category, ":", total)
-
+    
     elif choice == "6":
+        selected_month = input("Enter month (YYYY-MM): ")
+
+        monthly_total = 0
+
+        for expense in expenses:
+            if len(expense) > 3:
+                if expense[3].startswith(selected_month):
+                    monthly_total += expense[1]
+
+        print(
+            selected_month,
+            "Total Spending:",
+            monthly_total
+        )
+    
+    elif choice == "7":
         print("Goodbye!")
         break
 
