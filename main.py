@@ -12,11 +12,12 @@ while True:
     print("\n===== EXPENSE TRACKER =====")
     print("1. Add Expense")
     print("2. View Expenses")
-    print("3. Delete Expense")
-    print("4. Total Spending")
-    print("5. Category-wise Spending")
-    print("6. Monthly Spending Summary")
-    print("7. Exit")
+    print("3. Search Expenses")
+    print("4. Delete Expense")
+    print("5. Total Spending")
+    print("6. Category-wise Spending")
+    print("7. Monthly Spending Summary")
+    print("8. Exit")
 
     choice = input("Enter your choice: ")
 
@@ -87,7 +88,37 @@ while True:
                     "| Date:", expense_date
                 )
 
+    
     elif choice == "3":
+        search_name = input(
+            "Enter expense name to search: "
+        ).strip().lower()
+
+        found = False
+
+        for expense in expenses:
+            if (
+                search_name in expense[0].lower()
+                or search_name in expense[2].lower()
+            ):
+                expense_date = (
+                    expense[3] if len(expense) > 3
+                    else "Old expense"
+                )
+
+                print(
+                    "Name:", expense[0],
+                    "| Amount:", expense[1],
+                    "| Category:", expense[2],
+                    "| Date:", expense_date
+                )
+
+                found = True
+
+        if not found:
+            print("No matching expense found.") 
+            
+    elif choice == "4":
         if len(expenses) == 0:
             print("No expenses to delete.")
         else:
@@ -117,7 +148,7 @@ while True:
             except ValueError:
                 print("Please enter a valid number.")
 
-    elif choice == "4":
+    elif choice == "5":
         total = 0
 
         for expense in expenses:
@@ -125,7 +156,7 @@ while True:
 
         print("Total Spending:", total)
 
-    elif choice == "5":
+    elif choice == "6":
         if len(expenses) == 0:
             print("No expenses found.")
         else:
@@ -145,7 +176,7 @@ while True:
             for category, total in category_totals.items():
                 print(category, ":", total)
     
-    elif choice == "6":
+    elif choice == "7":
         selected_month = input("Enter month (YYYY-MM): ")
 
         monthly_total = 0
@@ -161,7 +192,7 @@ while True:
             monthly_total
         )
     
-    elif choice == "7":
+    elif choice == "8":
         print("Goodbye!")
         break
 
