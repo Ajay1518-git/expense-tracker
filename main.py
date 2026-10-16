@@ -13,11 +13,12 @@ while True:
     print("1. Add Expense")
     print("2. View Expenses")
     print("3. Search Expenses")
-    print("4. Delete Expense")
-    print("5. Total Spending")
-    print("6. Category-wise Spending")
-    print("7. Monthly Spending Summary")
-    print("8. Exit")
+    print("4. Edit Expense")
+    print("5. Delete Expense")
+    print("6. Total Spending")
+    print("7. Category-wise Spending")
+    print("8. Monthly Spending Summary")
+    print("9. Exit")
 
     choice = input("Enter your choice: ")
 
@@ -117,8 +118,78 @@ while True:
 
         if not found:
             print("No matching expense found.") 
+
             
     elif choice == "4":
+        if len(expenses) == 0:
+            print("No expenses to edit.")
+        else:
+            for i, expense in enumerate(expenses):
+                print(i + 1, ".", expense[0], "-", expense[1])
+
+            try:
+                number = int(input("Enter expense number to edit: "))
+
+                if 1 <= number <= len(expenses):
+                    expense = expenses[number - 1]
+
+                    new_name = input(
+                        f"New name [{expense[0]}]: "
+                    ).strip()
+                    if new_name:
+                        expense[0] = new_name
+
+                    new_amount = input(
+                        f"New amount [{expense[1]}]: "
+                    ).strip()
+                    if new_amount:
+                        try:
+                            amount = float(new_amount)
+                            if amount >= 0:
+                                expense[1] = amount
+                            else:
+                                print("Amount cannot be negative.")
+                        except ValueError:
+                            print("Invalid amount. Keeping old amount.")
+
+                    new_category = input(
+                        f"New category [{expense[2]}]: "
+                    ).strip()
+                    if new_category:
+                        expense[2] = new_category
+
+                    new_date = input(
+                        f"New date [{expense[3] if len(expense) > 3 else 'Old expense'}] "
+                        "(YYYY-MM-DD, Enter to keep): "
+                    ).strip()
+
+                    if new_date:
+                        try:
+                            new_date = new_date.replace("/", "-")
+                            new_date = new_date.replace(" ", "-")
+                            parsed_date = datetime.strptime(
+                                new_date, "%Y-%m-%d"
+                            )
+                            new_date = parsed_date.strftime("%Y-%m-%d")
+
+                            if len(expense) > 3:
+                                expense[3] = new_date
+                            else:
+                                expense.append(new_date)
+                        except ValueError:
+                            print("Invalid date. Keeping old date.")
+
+                    with open("expenses.json", "w") as file:
+                        json.dump(expenses, file, indent=4)
+
+                    print("Expense updated successfully!")
+                else:
+                    print("Invalid expense number.")
+
+            except ValueError:
+                print("Please enter a valid number.")
+
+    elif choice == "5":
         if len(expenses) == 0:
             print("No expenses to delete.")
         else:
@@ -148,7 +219,7 @@ while True:
             except ValueError:
                 print("Please enter a valid number.")
 
-    elif choice == "5":
+    elif choice == "6":
         total = 0
 
         for expense in expenses:
@@ -156,7 +227,7 @@ while True:
 
         print("Total Spending:", total)
 
-    elif choice == "6":
+    elif choice == "7":
         if len(expenses) == 0:
             print("No expenses found.")
         else:
@@ -176,7 +247,7 @@ while True:
             for category, total in category_totals.items():
                 print(category, ":", total)
     
-    elif choice == "7":
+    elif choice == "8":
         selected_month = input("Enter month (YYYY-MM): ")
 
         monthly_total = 0
@@ -192,7 +263,7 @@ while True:
             monthly_total
         )
     
-    elif choice == "8":
+    elif choice == "9":
         print("Goodbye!")
         break
 
