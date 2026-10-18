@@ -60,7 +60,21 @@ while True:
         category = input(
             "Enter category (Food/Travel/Shopping/Other): "
         )
-        amount = float(input("Enter amount: "))
+
+        while True:
+            try:
+                amount = float(input("Enter amount: "))
+
+                if amount <= 0:
+                    print("Amount must be greater than zero!")
+                    continue
+
+                break
+
+            except ValueError:
+                print(
+                    "Invalid amount! Please enter a number, like 150 or 99.50."
+                )
 
         expenses.append(
             [expense_name, amount, category, expense_date]
