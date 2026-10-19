@@ -23,7 +23,7 @@ while True:
     print("9. Monthly Spending Summary")
     print("10. Exit")
 
-    choice = input("Enter your choice: ")
+    choice = input("Enter your choice: ").strip()
 
     if choice == "1":
         expense_name = input("Enter expense name: ")
