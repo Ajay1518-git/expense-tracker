@@ -91,9 +91,17 @@ while True:
         if len(expenses) == 0:
             print("No expenses found.")
         else:
-            print("\n===== YOUR EXPENSES =====")
+            print("\n===== YOUR EXPENSES (DATE-WISE) =====")
 
-            for expense in expenses:
+            sorted_expenses = sorted(
+                expenses,
+                key=lambda expense: (
+                    expense[3] if len(expense) > 3
+                    else "9999-99-99"
+                )
+            )
+
+            for expense in sorted_expenses:
                 expense_date = (
                     expense[3] if len(expense) > 3
                     else "Old expense"
