@@ -3,6 +3,13 @@ import json
 from datetime import date, datetime
 
 try:
+    with open("budget.json", "r") as file:
+        budget_data = json.load(file)
+        monthly_budget = float(budget_data["monthly_budget"])
+except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError):
+    monthly_budget = 10000
+
+try:
     with open("expenses.json", "r") as file:
         expenses = json.load(file)
 except (FileNotFoundError, json.JSONDecodeError):
@@ -21,7 +28,9 @@ while True:
     print("7. Total Spending")
     print("8. Category-wise Spending")
     print("9. Monthly Spending Summary")
-    print("10. Exit")
+    print("10. Set Monthly Budget")
+    print("11. Budget Status")
+    print("12. Exit")
 
     choice = input("Enter your choice: ").strip()
 
@@ -86,6 +95,35 @@ while True:
         print("Expense added:", expense_name)
         print("Amount:", amount)
         print("Date:", expense_date)
+
+        
+        # Automatic monthly budget alert
+        today_month = date.today().strftime("%Y-%m")
+        monthly_spent = 0
+
+        for expense in expenses:
+            if len(expense) > 3 and expense[3].startswith(today_month):
+                monthly_spent += expense[1]
+
+        remaining = monthly_budget - monthly_spent
+        percentage = (monthly_spent / monthly_budget) * 100
+
+        print("\n===== BUDGET ALERT =====")
+        print(f"Budget used: {percentage:.1f}%")
+
+        if monthly_spent > monthly_budget:
+            print(f"ALERT: Budget exceeded by ₹{monthly_spent - monthly_budget:.2f}!")
+
+        elif monthly_spent == monthly_budget:
+            print("ALERT: You have reached your monthly budget!")
+
+        elif percentage >= 80:
+            print("WARNING: You have used 80% or more of your budget!")
+            print(f"₹{remaining:.2f} more left for this month.")
+
+        else:
+            print(f"₹{remaining:.2f} more left for this month.")
+
 
     elif choice == "2":
         if len(expenses) == 0:
@@ -298,9 +336,62 @@ while True:
             monthly_total
         )
     
+    
     elif choice == "10":
+        while True:
+            try:
+                new_budget = float(input("Enter monthly budget: ₹"))
+
+                if new_budget <= 0:
+                    print("Budget must be greater than zero!")
+                    continue
+
+                monthly_budget = new_budget
+
+                with open("budget.json", "w") as file:
+                    json.dump(
+                        {"monthly_budget": monthly_budget},
+                        file,
+                        indent=4
+                    )
+
+                print(f"Monthly budget set to ₹{monthly_budget:.2f}")
+                break
+
+            except ValueError:
+                print("Please enter a valid amount.")
+
+    elif choice == "11":
+        today_month = date.today().strftime("%Y-%m")
+        monthly_spent = 0
+
+        for expense in expenses:
+            if len(expense) > 3 and expense[3].startswith(today_month):
+                monthly_spent += expense[1]
+
+        remaining = monthly_budget - monthly_spent
+
+        print("\n===== MONTHLY BUDGET STATUS =====")
+        print(f"Monthly budget: ₹{monthly_budget:.2f}")
+        print(f"Spent this month: ₹{monthly_spent:.2f}")
+
+        percentage = (monthly_spent / monthly_budget) * 100
+        print(f"Budget used: {percentage:.1f}%")
+
+        if monthly_spent > monthly_budget:
+            print(f"Budget exceeded by ₹{monthly_spent - monthly_budget:.2f}!")
+            print("ALERT: Monthly budget exceeded!")
+
+        elif monthly_spent == monthly_budget:
+            print("ALERT: You've reached 100% of your monthly budget!")
+            print("₹0.00 left for this month.")
+
+        else:
+            print(f"₹{remaining:.2f} more left for this month!")
+
+            if percentage >= 80:
+                print("WARNING: You've used 80% or more of your budget!")
+
+    elif choice == "12":
         print("Goodbye!")
         break
-
-    else:
-        print("Invalid choice")
