@@ -3,3 +3,5 @@ main_restored.py
 expense-tracker-safety-backup/
 __pycache__/
 *.pyc
+expenses.json
+main_before_insights.py

@@ -15,6 +15,18 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     expenses = []
 
+for expense in expenses:
+    if len(expense) > 3:
+        try:
+            normalized_date = expense[3].replace("/", "-").replace(" ", "-")
+            parsed_date = datetime.strptime(normalized_date, "%Y-%m-%d")
+            expense[3] = parsed_date.strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+
+with open("expenses.json", "w") as file:
+    json.dump(expenses, file, indent=4)
+    
 last_deleted_expense = None
 
 while True:
@@ -30,7 +42,8 @@ while True:
     print("9. Monthly Spending Summary")
     print("10. Set Monthly Budget")
     print("11. Budget Status")
-    print("12. Exit")
+    print("12. Spending Insights")
+    print("13. Exit")
 
     choice = input("Enter your choice: ").strip()
 
@@ -391,7 +404,33 @@ while True:
 
             if percentage >= 80:
                 print("WARNING: You've used 80% or more of your budget!")
-
     elif choice == "12":
-        print("Goodbye!")
+        if not expenses:
+            print("No expenses found.")
+        else:
+            category_totals = {}
+
+            for expense in expenses:
+                category = expense[2]
+                amount = expense[1]
+                category_totals[category] = (
+                    category_totals.get(category, 0) + amount
+                )
+
+            highest_spending = max(category_totals.values())
+
+            print("\n===== SPENDING INSIGHTS =====")
+            print("Category-wise totals:")
+
+            for category, total in category_totals.items():
+                print(f"{category}: ₹{total:.2f}")
+
+            print("\nHighest spending category/categories:")
+
+            for category, total in category_totals.items():
+                if total == highest_spending:
+                    print(f"{category}: ₹{total:.2f}")
+
+    elif choice == "13":
+        print("Exiting Expense Tracker. Goodbye!")
         break
