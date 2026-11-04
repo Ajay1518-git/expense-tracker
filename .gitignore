@@ -5,3 +5,8 @@ __pycache__/
 *.pyc
 expenses.json
 main_before_insights.py
+
+node_modules/
+dist/
+android/
+*.apk
